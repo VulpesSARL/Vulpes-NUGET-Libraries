@@ -1,0 +1,50 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net48;net10.0</TargetFrameworks>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <AssemblyName>Vulpes.Library.SQLLib</AssemblyName>
+    <AssemblyTitle>Vulpes.Library.SQLLib</AssemblyTitle>
+    <RootNamespace>Vulpes.Library</RootNamespace>
+    <Title>Vulpes SQL Lib</Title>
+    <Description>A small library to use with MSSQL (low level)</Description>
+    <Copyright>(C) Vulpes, 2026</Copyright>
+    <PackageIcon>Vulpes DLL PNG 256x256.png</PackageIcon>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
+    <PackageTags>sql mssql tsql lib helper vulpes SqlClient</PackageTags>
+    <RepositoryUrl>https://github.com/VulpesSARL/Vulpes-NUGET-Libraries</RepositoryUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\Vulpes DLL PNG 256x256.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net48'">
+    <DefineConstants>$(DefineConstants);NET48;SQLLIB_USE_LEGACY_NAMESPACE</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net10.0'">
+    <DefineConstants>$(DefineConstants);NET10</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="7.0.2" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
+    <!-- <Reference Include="System.SAMPLE" /> -->
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="readme.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+</Project>
