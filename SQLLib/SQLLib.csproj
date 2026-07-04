@@ -17,6 +17,7 @@
     <RepositoryUrl>https://github.com/VulpesSARL/Vulpes-NUGET-Libraries</RepositoryUrl>
     <SignNuGetPackage>true</SignNuGetPackage>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <Authors>Foxy Vulpes</Authors>
   </PropertyGroup>
 
   <ItemGroup>
