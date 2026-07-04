@@ -15,10 +15,20 @@
     <PackageReadmeFile>readme.md</PackageReadmeFile>
     <PackageTags>sql mssql tsql lib helper vulpes SqlClient</PackageTags>
     <RepositoryUrl>https://github.com/VulpesSARL/Vulpes-NUGET-Libraries</RepositoryUrl>
+    <SignNuGetPackage>true</SignNuGetPackage>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
     <None Include="..\Vulpes DLL PNG 256x256.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="readme.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
@@ -40,11 +50,11 @@
     <!-- <Reference Include="System.SAMPLE" /> -->
   </ItemGroup>
 
-  <ItemGroup>
-    <None Include="readme.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-  </ItemGroup>
+  <Target Name="SignPackage" AfterTargets="Pack" Condition="'$(Configuration)' == 'Release' AND '$(SignNuGetPackage)' == 'true'">
+    <ItemGroup>
+      <PackagesToSign Include="$(PackageOutputPath)\*.nupkg" />
+    </ItemGroup>
+    <Exec Command="vulpesnugetsign.cmd %(PackagesToSign.Identity)" />
+  </Target>
 
 </Project>
