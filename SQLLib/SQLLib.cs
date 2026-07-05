@@ -368,6 +368,23 @@ namespace Vulpes.Library
             if (Connection == null)
                 return (false);
             Debug.WriteLine("SQL--: " + OutputParameters(Parameters) + Query);
+
+            if (RunningDR != null)
+            {
+                if (RunningDR.IsClosed == false)
+                {
+                    if (SEHError == true)
+                    {
+                        Debug.WriteLine("DR already open -> " + RunningDRStack.ToString());
+                        throw new VulpesSqlDataReaderConflictException("There's already an open SqlDataReader") { CurrentOpenDR = RunningDR, LastStackTrace = RunningDRStack };
+                    }
+                    else
+                    {
+                        return (false);
+                    }
+                }
+            }
+
 #if !DEBUGDB
             try
             {
@@ -400,6 +417,22 @@ namespace Vulpes.Library
         {
             if (Connection == null)
                 return (false);
+
+            if (RunningDR != null)
+            {
+                if (RunningDR.IsClosed == false)
+                {
+                    if (SEHError == true)
+                    {
+                        Debug.WriteLine("DR already open -> " + RunningDRStack.ToString());
+                        throw new VulpesSqlDataReaderConflictException("There's already an open SqlDataReader") { CurrentOpenDR = RunningDR, LastStackTrace = RunningDRStack };
+                    }
+                    else
+                    {
+                        return (false);
+                    }
+                }
+            }
 
             string SQLEdition = Convert.ToString(ExecSQLScalar("SELECT SERVERPROPERTY('edition')")).Trim();
             if (SQLEdition.ToLower().StartsWith("enterprise edition") == false && SQLEdition.ToLower() != "sql azure")
@@ -442,6 +475,23 @@ namespace Vulpes.Library
             if (Connection == null)
                 return (0);
             Debug.WriteLine("SQLNQ: " + OutputParameters(Parameters) + Query);
+
+            if (RunningDR != null)
+            {
+                if (RunningDR.IsClosed == false)
+                {
+                    if (SEHError == true)
+                    {
+                        Debug.WriteLine("DR already open -> " + RunningDRStack.ToString());
+                        throw new VulpesSqlDataReaderConflictException("There's already an open SqlDataReader") { CurrentOpenDR = RunningDR, LastStackTrace = RunningDRStack };
+                    }
+                    else
+                    {
+                        return (0);
+                    }
+                }
+            }
+
 #if !DEBUGDB
             try
             {
@@ -474,6 +524,23 @@ namespace Vulpes.Library
             if (Connection == null)
                 return (null);
             Debug.WriteLine("SQLSC: " + OutputParameters(Parameters) + Query);
+
+            if (RunningDR != null)
+            {
+                if (RunningDR.IsClosed == false)
+                {
+                    if (SEHError == true)
+                    {
+                        Debug.WriteLine("DR already open -> " + RunningDRStack.ToString());
+                        throw new VulpesSqlDataReaderConflictException("There's already an open SqlDataReader") { CurrentOpenDR = RunningDR, LastStackTrace = RunningDRStack };
+                    }
+                    else
+                    {
+                        return (null);
+                    }
+                }
+            }
+
 #if !DEBUGDB
             try
             {
@@ -513,6 +580,7 @@ namespace Vulpes.Library
                 {
                     if (SEHError == true)
                     {
+                        Debug.WriteLine("DR already open -> " + RunningDRStack.ToString());
                         throw new VulpesSqlDataReaderConflictException("There's already an open SqlDataReader") { CurrentOpenDR = RunningDR, LastStackTrace = RunningDRStack };
                     }
                     else
@@ -563,6 +631,23 @@ namespace Vulpes.Library
             if (Connection == null)
                 return (null);
             Debug.WriteLine("SQLDS: " + OutputParameters(Parameters) + Query);
+
+            if (RunningDR != null)
+            {
+                if (RunningDR.IsClosed == false)
+                {
+                    if (SEHError == true)
+                    {
+                        Debug.WriteLine("DR already open -> " + RunningDRStack.ToString());
+                        throw new VulpesSqlDataReaderConflictException("There's already an open SqlDataReader") { CurrentOpenDR = RunningDR, LastStackTrace = RunningDRStack };
+                    }
+                    else
+                    {
+                        return (null);
+                    }
+                }
+            }
+
 #if !DEBUGDB
             try
             {
@@ -599,6 +684,23 @@ namespace Vulpes.Library
         {
             if (Connection == null)
                 return (null);
+
+            if (RunningDR != null)
+            {
+                if (RunningDR.IsClosed == false)
+                {
+                    if (SEHError == true)
+                    {
+                        Debug.WriteLine("DR already open -> " + RunningDRStack.ToString());
+                        throw new VulpesSqlDataReaderConflictException("There's already an open SqlDataReader") { CurrentOpenDR = RunningDR, LastStackTrace = RunningDRStack };
+                    }
+                    else
+                    {
+                        return (null);
+                    }
+                }
+            }
+
 #if !DEBUGDB
             try
             {
@@ -755,6 +857,22 @@ namespace Vulpes.Library
 
             Query += ") VALUES (" + Variables + ")";
 
+            if (RunningDR != null)
+            {
+                if (RunningDR.IsClosed == false)
+                {
+                    if (SEHError == true)
+                    {
+                        Debug.WriteLine("DR already open -> " + RunningDRStack.ToString());
+                        throw new VulpesSqlDataReaderConflictException("There's already an open SqlDataReader") { CurrentOpenDR = RunningDR, LastStackTrace = RunningDRStack };
+                    }
+                    else
+                    {
+                        return (false);
+                    }
+                }
+            }
+
 #if !DEBUGDB
             try
             {
@@ -824,6 +942,22 @@ namespace Vulpes.Library
                 Variables = Variables.Substring(0, Variables.Length - 1);
 
             Query += ") OUTPUT Inserted.ID INTO @tabl VALUES (" + Variables + "); SELECT * FROM @tabl";
+
+            if (RunningDR != null)
+            {
+                if (RunningDR.IsClosed == false)
+                {
+                    if (SEHError == true)
+                    {
+                        Debug.WriteLine("DR already open -> " + RunningDRStack.ToString());
+                        throw new VulpesSqlDataReaderConflictException("There's already an open SqlDataReader") { CurrentOpenDR = RunningDR, LastStackTrace = RunningDRStack };
+                    }
+                    else
+                    {
+                        return (null);
+                    }
+                }
+            }
 
 #if !DEBUGDB
             try
@@ -1062,6 +1196,22 @@ namespace Vulpes.Library
             {
                 if (SQLTransaction == true)
                     throw new Exception("Cannot run in Transaction mode");
+
+                if (RunningDR != null)
+                {
+                    if (RunningDR.IsClosed == false)
+                    {
+                        if (SEHError == true)
+                        {
+                            Debug.WriteLine("DR already open -> " + RunningDRStack.ToString());
+                            throw new VulpesSqlDataReaderConflictException("There's already an open SqlDataReader") { CurrentOpenDR = RunningDR, LastStackTrace = RunningDRStack };
+                        }
+                        else
+                        {
+                            return (false);
+                        }
+                    }
+                }
 
                 if (datas.Count == 0)
                     return (true);
