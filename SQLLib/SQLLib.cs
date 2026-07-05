@@ -22,10 +22,11 @@ namespace Vulpes.Library
     public class VulpesSqlDataReaderConflictException : Exception
     {
         public StackTrace LastStackTrace;
+        public StackTrace CurrentStackTrace;
         public SqlDataReader CurrentOpenDR;
         public override string ToString()
         {
-            return (Message + "\r\nLast OP stack: " + LastStackTrace.ToString());
+            return (Message + "\r\nLast OP stack: " + LastStackTrace.ToString() + "\r\n This stack: " + CurrentStackTrace.ToString());
         }
 
         public VulpesSqlDataReaderConflictException(string message) : base(message) { }
@@ -376,7 +377,7 @@ namespace Vulpes.Library
                     if (SEHError == true)
                     {
                         Debug.WriteLine("DR already open -> " + RunningDRStack.ToString());
-                        throw new VulpesSqlDataReaderConflictException("There's already an open SqlDataReader") { CurrentOpenDR = RunningDR, LastStackTrace = RunningDRStack };
+                        throw new VulpesSqlDataReaderConflictException("There's already an open SqlDataReader") { CurrentOpenDR = RunningDR, LastStackTrace = RunningDRStack, CurrentStackTrace = new StackTrace(skipFrames: 1, fNeedFileInfo: true) };
                     }
                     else
                     {
@@ -425,7 +426,7 @@ namespace Vulpes.Library
                     if (SEHError == true)
                     {
                         Debug.WriteLine("DR already open -> " + RunningDRStack.ToString());
-                        throw new VulpesSqlDataReaderConflictException("There's already an open SqlDataReader") { CurrentOpenDR = RunningDR, LastStackTrace = RunningDRStack };
+                        throw new VulpesSqlDataReaderConflictException("There's already an open SqlDataReader") { CurrentOpenDR = RunningDR, LastStackTrace = RunningDRStack, CurrentStackTrace = new StackTrace(skipFrames: 1, fNeedFileInfo: true) };
                     }
                     else
                     {
@@ -483,7 +484,7 @@ namespace Vulpes.Library
                     if (SEHError == true)
                     {
                         Debug.WriteLine("DR already open -> " + RunningDRStack.ToString());
-                        throw new VulpesSqlDataReaderConflictException("There's already an open SqlDataReader") { CurrentOpenDR = RunningDR, LastStackTrace = RunningDRStack };
+                        throw new VulpesSqlDataReaderConflictException("There's already an open SqlDataReader") { CurrentOpenDR = RunningDR, LastStackTrace = RunningDRStack, CurrentStackTrace = new StackTrace(skipFrames: 1, fNeedFileInfo: true) };
                     }
                     else
                     {
@@ -532,7 +533,7 @@ namespace Vulpes.Library
                     if (SEHError == true)
                     {
                         Debug.WriteLine("DR already open -> " + RunningDRStack.ToString());
-                        throw new VulpesSqlDataReaderConflictException("There's already an open SqlDataReader") { CurrentOpenDR = RunningDR, LastStackTrace = RunningDRStack };
+                        throw new VulpesSqlDataReaderConflictException("There's already an open SqlDataReader") { CurrentOpenDR = RunningDR, LastStackTrace = RunningDRStack, CurrentStackTrace = new StackTrace(skipFrames: 1, fNeedFileInfo: true) };
                     }
                     else
                     {
@@ -581,7 +582,7 @@ namespace Vulpes.Library
                     if (SEHError == true)
                     {
                         Debug.WriteLine("DR already open -> " + RunningDRStack.ToString());
-                        throw new VulpesSqlDataReaderConflictException("There's already an open SqlDataReader") { CurrentOpenDR = RunningDR, LastStackTrace = RunningDRStack };
+                        throw new VulpesSqlDataReaderConflictException("There's already an open SqlDataReader") { CurrentOpenDR = RunningDR, LastStackTrace = RunningDRStack, CurrentStackTrace = new StackTrace(skipFrames: 1, fNeedFileInfo: true) };
                     }
                     else
                     {
@@ -639,7 +640,7 @@ namespace Vulpes.Library
                     if (SEHError == true)
                     {
                         Debug.WriteLine("DR already open -> " + RunningDRStack.ToString());
-                        throw new VulpesSqlDataReaderConflictException("There's already an open SqlDataReader") { CurrentOpenDR = RunningDR, LastStackTrace = RunningDRStack };
+                        throw new VulpesSqlDataReaderConflictException("There's already an open SqlDataReader") { CurrentOpenDR = RunningDR, LastStackTrace = RunningDRStack, CurrentStackTrace = new StackTrace(skipFrames: 1, fNeedFileInfo: true) };
                     }
                     else
                     {
@@ -692,7 +693,7 @@ namespace Vulpes.Library
                     if (SEHError == true)
                     {
                         Debug.WriteLine("DR already open -> " + RunningDRStack.ToString());
-                        throw new VulpesSqlDataReaderConflictException("There's already an open SqlDataReader") { CurrentOpenDR = RunningDR, LastStackTrace = RunningDRStack };
+                        throw new VulpesSqlDataReaderConflictException("There's already an open SqlDataReader") { CurrentOpenDR = RunningDR, LastStackTrace = RunningDRStack, CurrentStackTrace = new StackTrace(skipFrames: 1, fNeedFileInfo: true) };
                     }
                     else
                     {
@@ -864,7 +865,7 @@ namespace Vulpes.Library
                     if (SEHError == true)
                     {
                         Debug.WriteLine("DR already open -> " + RunningDRStack.ToString());
-                        throw new VulpesSqlDataReaderConflictException("There's already an open SqlDataReader") { CurrentOpenDR = RunningDR, LastStackTrace = RunningDRStack };
+                        throw new VulpesSqlDataReaderConflictException("There's already an open SqlDataReader") { CurrentOpenDR = RunningDR, LastStackTrace = RunningDRStack, CurrentStackTrace = new StackTrace(skipFrames: 1, fNeedFileInfo: true) };
                     }
                     else
                     {
@@ -950,7 +951,7 @@ namespace Vulpes.Library
                     if (SEHError == true)
                     {
                         Debug.WriteLine("DR already open -> " + RunningDRStack.ToString());
-                        throw new VulpesSqlDataReaderConflictException("There's already an open SqlDataReader") { CurrentOpenDR = RunningDR, LastStackTrace = RunningDRStack };
+                        throw new VulpesSqlDataReaderConflictException("There's already an open SqlDataReader") { CurrentOpenDR = RunningDR, LastStackTrace = RunningDRStack, CurrentStackTrace = new StackTrace(skipFrames: 1, fNeedFileInfo: true) };
                     }
                     else
                     {
@@ -1204,7 +1205,7 @@ namespace Vulpes.Library
                         if (SEHError == true)
                         {
                             Debug.WriteLine("DR already open -> " + RunningDRStack.ToString());
-                            throw new VulpesSqlDataReaderConflictException("There's already an open SqlDataReader") { CurrentOpenDR = RunningDR, LastStackTrace = RunningDRStack };
+                            throw new VulpesSqlDataReaderConflictException("There's already an open SqlDataReader") { CurrentOpenDR = RunningDR, LastStackTrace = RunningDRStack, CurrentStackTrace = new StackTrace(skipFrames: 1, fNeedFileInfo: true) };
                         }
                         else
                         {
