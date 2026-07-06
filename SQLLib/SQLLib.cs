@@ -88,7 +88,7 @@ namespace Vulpes.Library
         {
             if (Debug_EnableVerboseOutput == true)
             {
-                Debugger.Log(4, "SQLLib", data);
+                Debugger.Log(4, "SQLLib", data + Environment.NewLine);
             }
         }
 
