@@ -47,9 +47,16 @@ namespace Vulpes.Library
         public int ConnectRetryInterval = 30;
         public int ConnectTimeout = 180;
         public int SqlCommandTimeout = 600;
+
+        public static bool Debug_EnableVerboseOutput = false;
+        public static bool Debug_EnableParametersOutput = false;
+
         public string ApplicationName
         {
-            get { return (appname); }
+            get 
+            {
+                return (appname); 
+            }
             set
             {
                 appname = value.Trim();
@@ -73,13 +80,21 @@ namespace Vulpes.Library
             }
             catch (Exception ee)
             {
-                Debug.WriteLine(ee.ToString());
+                MyDebugWriteLine(ee.ToString());
+            }
+        }
+
+        public void MyDebugWriteLine(string data)
+        {
+            if (Debug_EnableVerboseOutput == true)
+            {
+                Debugger.Log(4, "SQLLib", data);
             }
         }
 
         public void CloseConnection()
         {
-            Debug.WriteLine("SQLCONNET: CLOSE ===============");
+            MyDebugWriteLine("SQLCONNET: CLOSE ===============");
             try
             {
                 Connection.Close();
@@ -120,7 +135,7 @@ namespace Vulpes.Library
 
         public bool ConnectLocalDatabaseBlank()
         {
-            Debug.WriteLine("SQLCONNECT (LOCAL blank)");
+            MyDebugWriteLine("SQLCONNECT (LOCAL blank)");
 #if !DEBUGDB
             try
             {
@@ -140,7 +155,7 @@ namespace Vulpes.Library
             }
             catch (Exception ee)
             {
-                Debug.WriteLine(ee.ToString());
+                MyDebugWriteLine(ee.ToString());
                 if (SEHError == true)
                     throw;
                 return (false);
@@ -151,7 +166,7 @@ namespace Vulpes.Library
 
         public bool ConnectLocalDatabase(string Filename)
         {
-            Debug.WriteLine("SQLCONNECT (LOCAL): " + Filename);
+            MyDebugWriteLine("SQLCONNECT (LOCAL): " + Filename);
 #if !DEBUGDB
             try
             {
@@ -174,7 +189,7 @@ namespace Vulpes.Library
             }
             catch (Exception ee)
             {
-                Debug.WriteLine(ee.ToString());
+                MyDebugWriteLine(ee.ToString());
                 if (SEHError == true)
                     throw;
                 return (false);
@@ -183,69 +198,72 @@ namespace Vulpes.Library
             return (true);
         }
 
-        public string OutputParameters(SQLParam[] parameters)
+        public string MyDebugOutputParameters(SQLParam[] parameters)
         {
-#if DEBUG
-            StringBuilder sb = new StringBuilder();
-            if (parameters == null)
-                return ("");
-            foreach (SQLParam p in parameters)
+            if (Debug_EnableParametersOutput == true && Debug_EnableVerboseOutput == true)
             {
-                string VType = "";
-                string VValue = "";
-                Type t = p.Content.GetType();
-                if (t == typeof(DateTime))
+                StringBuilder sb = new StringBuilder();
+                if (parameters == null)
+                    return ("");
+                foreach (SQLParam p in parameters)
                 {
-                    VType = "datetime";
-                    if (t == null)
-                        VValue = "null";
-                    else
-                        VValue = "'" + Convert.ToDateTime(p.Content).ToString("yyyy-MM-dd HH:mm:ss") + "'";
+                    string VType = "";
+                    string VValue = "";
+                    Type t = p.Content.GetType();
+                    if (t == typeof(DateTime))
+                    {
+                        VType = "datetime";
+                        if (t == null)
+                            VValue = "null";
+                        else
+                            VValue = "'" + Convert.ToDateTime(p.Content).ToString("yyyy-MM-dd HH:mm:ss") + "'";
+                    }
+                    if (t == typeof(Int32))
+                    {
+                        VType = "int";
+                        if (t == null)
+                            VValue = "null";
+                        else
+                            VValue = Convert.ToInt32(p.Content).ToString();
+                    }
+                    if (t == typeof(Int64))
+                    {
+                        VType = "bigint";
+                        if (t == null)
+                            VValue = "null";
+                        else
+                            VValue = Convert.ToInt64(p.Content).ToString();
+                    }
+                    if (t == typeof(string))
+                    {
+                        VType = "nvarchar(max)";
+                        if (t == null)
+                            VValue = "null";
+                        else
+                            VValue = "'" + Convert.ToString(p.Content).Replace("'", "''") + "'";
+                    }
+                    if (t == typeof(decimal))
+                    {
+                        VType = "decimal(28,10)";
+                        if (t == null)
+                            VValue = "null";
+                        else
+                            VValue = Convert.ToDecimal(p.Content).ToString(new CultureInfo("en-US"));
+                    }
+                    if (string.IsNullOrWhiteSpace(VType) == true)
+                    {
+                        VType = "UNKNWON /* " + t.ToString() + " */";
+                    }
+                    sb.AppendLine("DECLARE " + p.Variable + " " + VType + " = " + VValue);
                 }
-                if (t == typeof(Int32))
-                {
-                    VType = "int";
-                    if (t == null)
-                        VValue = "null";
-                    else
-                        VValue = Convert.ToInt32(p.Content).ToString();
-                }
-                if (t == typeof(Int64))
-                {
-                    VType = "bigint";
-                    if (t == null)
-                        VValue = "null";
-                    else
-                        VValue = Convert.ToInt64(p.Content).ToString();
-                }
-                if (t == typeof(string))
-                {
-                    VType = "nvarchar(max)";
-                    if (t == null)
-                        VValue = "null";
-                    else
-                        VValue = "'" + Convert.ToString(p.Content).Replace("'", "''") + "'";
-                }
-                if (t == typeof(decimal))
-                {
-                    VType = "decimal(28,10)";
-                    if (t == null)
-                        VValue = "null";
-                    else
-                        VValue = Convert.ToDecimal(p.Content).ToString(new CultureInfo("en-US"));
-                }
-                if (string.IsNullOrWhiteSpace(VType) == true)
-                {
-                    VType = "UNKNWON /* " + t.ToString() + " */";
-                }
-                sb.AppendLine("DECLARE " + p.Variable + " " + VType + " = " + VValue);
+                sb.AppendLine();
+                sb.AppendLine();
+                return (sb.ToString()); 
             }
-            sb.AppendLine();
-            sb.AppendLine();
-            return (sb.ToString());
-#else
-            return ("");
-#endif
+            else
+            {
+                return ("");
+            }
         }
 
         public bool ConnectDatabase(string server, string database)
@@ -263,7 +281,7 @@ namespace Vulpes.Library
 
         public bool ConnectDatabase(string DirectConnectionString)
         {
-            Debug.WriteLine("SQLCONNECT: " + DirectConnectionString);
+            MyDebugWriteLine("SQLCONNECT: " + DirectConnectionString);
 #if !DEBUGDB
             try
             {
@@ -282,7 +300,7 @@ namespace Vulpes.Library
             }
             catch (Exception ee)
             {
-                Debug.WriteLine(ee.ToString());
+                MyDebugWriteLine(ee.ToString());
                 if (SEHError == true)
                     throw;
                 return (false);
@@ -295,7 +313,7 @@ namespace Vulpes.Library
         {
             if (UseWinAuth == false)
                 return (ConnectDatabase(server, database, "", "", UseEncryption));
-            Debug.WriteLine("SQLCONNECT: " + database + "@" + server);
+            MyDebugWriteLine("SQLCONNECT: " + database + "@" + server);
 #if !DEBUGDB
             try
             {
@@ -318,7 +336,7 @@ namespace Vulpes.Library
             }
             catch (Exception ee)
             {
-                Debug.WriteLine(ee.ToString());
+                MyDebugWriteLine(ee.ToString());
                 if (SEHError == true)
                     throw;
                 return (false);
@@ -329,7 +347,7 @@ namespace Vulpes.Library
 
         public bool ConnectDatabase(string server, string database, string Username, string Password, bool UseEncryption)
         {
-            Debug.WriteLine("SQLCONNECT: " + database + "@" + server);
+            MyDebugWriteLine("SQLCONNECT: " + database + "@" + server);
 #if !DEBUGDB
             try
             {
@@ -355,7 +373,7 @@ namespace Vulpes.Library
             }
             catch (Exception ee)
             {
-                Debug.WriteLine(ee.ToString());
+                MyDebugWriteLine(ee.ToString());
                 if (SEHError == true)
                     throw;
                 return (false);
@@ -368,7 +386,7 @@ namespace Vulpes.Library
         {
             if (Connection == null)
                 return (false);
-            Debug.WriteLine("SQL--: " + OutputParameters(Parameters) + Query);
+            MyDebugWriteLine("SQL--: " + MyDebugOutputParameters(Parameters) + Query);
 
             if (RunningDR != null)
             {
@@ -376,7 +394,7 @@ namespace Vulpes.Library
                 {
                     if (SEHError == true)
                     {
-                        Debug.WriteLine("DR already open -> " + RunningDRStack.ToString());
+                        MyDebugWriteLine("DR already open -> " + RunningDRStack.ToString());
                         throw new VulpesSqlDataReaderConflictException("There's already an open SqlDataReader") { CurrentOpenDR = RunningDR, LastStackTrace = RunningDRStack, CurrentStackTrace = new StackTrace(skipFrames: 1, fNeedFileInfo: true) };
                     }
                     else
@@ -406,7 +424,7 @@ namespace Vulpes.Library
             }
             catch (Exception ee)
             {
-                Debug.WriteLine(ee.ToString());
+                MyDebugWriteLine(ee.ToString());
                 if (SEHError == true)
                     throw;
                 return (false);
@@ -425,7 +443,7 @@ namespace Vulpes.Library
                 {
                     if (SEHError == true)
                     {
-                        Debug.WriteLine("DR already open -> " + RunningDRStack.ToString());
+                        MyDebugWriteLine("DR already open -> " + RunningDRStack.ToString());
                         throw new VulpesSqlDataReaderConflictException("There's already an open SqlDataReader") { CurrentOpenDR = RunningDR, LastStackTrace = RunningDRStack, CurrentStackTrace = new StackTrace(skipFrames: 1, fNeedFileInfo: true) };
                     }
                     else
@@ -438,10 +456,10 @@ namespace Vulpes.Library
             string SQLEdition = Convert.ToString(ExecSQLScalar("SELECT SERVERPROPERTY('edition')")).Trim();
             if (SQLEdition.ToLower().StartsWith("enterprise edition") == false && SQLEdition.ToLower() != "sql azure")
             {
-                Debug.WriteLine("NOT EXECUTING SQL--(EE): " + Query);
+                MyDebugWriteLine("NOT EXECUTING SQL--(EE): " + Query);
                 return (false);
             }
-            Debug.WriteLine("SQL--(EE): " + OutputParameters(Parameters) + Query);
+            MyDebugWriteLine("SQL--(EE): " + MyDebugOutputParameters(Parameters) + Query);
 
 #if !DEBUGDB
             try
@@ -463,7 +481,7 @@ namespace Vulpes.Library
             }
             catch (Exception ee)
             {
-                Debug.WriteLine(ee.ToString());
+                MyDebugWriteLine(ee.ToString());
                 if (SEHError == true)
                     throw;
                 return (false);
@@ -475,7 +493,7 @@ namespace Vulpes.Library
         {
             if (Connection == null)
                 return (0);
-            Debug.WriteLine("SQLNQ: " + OutputParameters(Parameters) + Query);
+            MyDebugWriteLine("SQLNQ: " + MyDebugOutputParameters(Parameters) + Query);
 
             if (RunningDR != null)
             {
@@ -483,7 +501,7 @@ namespace Vulpes.Library
                 {
                     if (SEHError == true)
                     {
-                        Debug.WriteLine("DR already open -> " + RunningDRStack.ToString());
+                        MyDebugWriteLine("DR already open -> " + RunningDRStack.ToString());
                         throw new VulpesSqlDataReaderConflictException("There's already an open SqlDataReader") { CurrentOpenDR = RunningDR, LastStackTrace = RunningDRStack, CurrentStackTrace = new StackTrace(skipFrames: 1, fNeedFileInfo: true) };
                     }
                     else
@@ -512,7 +530,7 @@ namespace Vulpes.Library
             }
             catch (Exception ee)
             {
-                Debug.WriteLine(ee.ToString());
+                MyDebugWriteLine(ee.ToString());
                 if (SEHError == true)
                     throw;
                 return (0);
@@ -524,7 +542,7 @@ namespace Vulpes.Library
         {
             if (Connection == null)
                 return (null);
-            Debug.WriteLine("SQLSC: " + OutputParameters(Parameters) + Query);
+            MyDebugWriteLine("SQLSC: " + MyDebugOutputParameters(Parameters) + Query);
 
             if (RunningDR != null)
             {
@@ -532,7 +550,7 @@ namespace Vulpes.Library
                 {
                     if (SEHError == true)
                     {
-                        Debug.WriteLine("DR already open -> " + RunningDRStack.ToString());
+                        MyDebugWriteLine("DR already open -> " + RunningDRStack.ToString());
                         throw new VulpesSqlDataReaderConflictException("There's already an open SqlDataReader") { CurrentOpenDR = RunningDR, LastStackTrace = RunningDRStack, CurrentStackTrace = new StackTrace(skipFrames: 1, fNeedFileInfo: true) };
                     }
                     else
@@ -561,7 +579,7 @@ namespace Vulpes.Library
             }
             catch (Exception ee)
             {
-                Debug.WriteLine(ee.ToString());
+                MyDebugWriteLine(ee.ToString());
                 if (SEHError == true)
                     throw;
                 return (null);
@@ -573,7 +591,7 @@ namespace Vulpes.Library
         {
             if (Connection == null)
                 return (null);
-            Debug.WriteLine("SQLDR: " + OutputParameters(Parameters) + Query);
+            MyDebugWriteLine("SQLDR: " + MyDebugOutputParameters(Parameters) + Query);
 
             if (RunningDR != null)
             {
@@ -581,7 +599,7 @@ namespace Vulpes.Library
                 {
                     if (SEHError == true)
                     {
-                        Debug.WriteLine("DR already open -> " + RunningDRStack.ToString());
+                        MyDebugWriteLine("DR already open -> " + RunningDRStack.ToString());
                         throw new VulpesSqlDataReaderConflictException("There's already an open SqlDataReader") { CurrentOpenDR = RunningDR, LastStackTrace = RunningDRStack, CurrentStackTrace = new StackTrace(skipFrames: 1, fNeedFileInfo: true) };
                     }
                     else
@@ -619,7 +637,7 @@ namespace Vulpes.Library
             }
             catch (Exception ee)
             {
-                Debug.WriteLine(ee.ToString());
+                MyDebugWriteLine(ee.ToString());
                 if (SEHError == true)
                     throw;
                 return (null);
@@ -631,7 +649,7 @@ namespace Vulpes.Library
         {
             if (Connection == null)
                 return (null);
-            Debug.WriteLine("SQLDS: " + OutputParameters(Parameters) + Query);
+            MyDebugWriteLine("SQLDS: " + MyDebugOutputParameters(Parameters) + Query);
 
             if (RunningDR != null)
             {
@@ -639,7 +657,7 @@ namespace Vulpes.Library
                 {
                     if (SEHError == true)
                     {
-                        Debug.WriteLine("DR already open -> " + RunningDRStack.ToString());
+                        MyDebugWriteLine("DR already open -> " + RunningDRStack.ToString());
                         throw new VulpesSqlDataReaderConflictException("There's already an open SqlDataReader") { CurrentOpenDR = RunningDR, LastStackTrace = RunningDRStack, CurrentStackTrace = new StackTrace(skipFrames: 1, fNeedFileInfo: true) };
                     }
                     else
@@ -673,7 +691,7 @@ namespace Vulpes.Library
             }
             catch (Exception ee)
             {
-                Debug.WriteLine(ee.ToString());
+                MyDebugWriteLine(ee.ToString());
                 if (SEHError == true)
                     throw;
                 return (null);
@@ -692,7 +710,7 @@ namespace Vulpes.Library
                 {
                     if (SEHError == true)
                     {
-                        Debug.WriteLine("DR already open -> " + RunningDRStack.ToString());
+                        MyDebugWriteLine("DR already open -> " + RunningDRStack.ToString());
                         throw new VulpesSqlDataReaderConflictException("There's already an open SqlDataReader") { CurrentOpenDR = RunningDR, LastStackTrace = RunningDRStack, CurrentStackTrace = new StackTrace(skipFrames: 1, fNeedFileInfo: true) };
                     }
                     else
@@ -726,7 +744,7 @@ namespace Vulpes.Library
             }
             catch (Exception ee)
             {
-                Debug.WriteLine(ee.ToString());
+                MyDebugWriteLine(ee.ToString());
                 if (SEHError == true)
                     throw;
                 return (null);
@@ -754,7 +772,7 @@ namespace Vulpes.Library
             }
             catch (Exception ee)
             {
-                Debug.WriteLine(ee.ToString());
+                MyDebugWriteLine(ee.ToString());
                 if (SEHError == true)
                     throw;
                 return (false);
@@ -782,7 +800,7 @@ namespace Vulpes.Library
             }
             catch (Exception ee)
             {
-                Debug.WriteLine(ee.ToString());
+                MyDebugWriteLine(ee.ToString());
                 if (SEHError == true)
                     throw;
                 return (false);
@@ -810,7 +828,7 @@ namespace Vulpes.Library
             }
             catch (Exception ee)
             {
-                Debug.WriteLine(ee.ToString());
+                MyDebugWriteLine(ee.ToString());
                 if (SEHError == true)
                     throw;
                 return (false);
@@ -864,7 +882,7 @@ namespace Vulpes.Library
                 {
                     if (SEHError == true)
                     {
-                        Debug.WriteLine("DR already open -> " + RunningDRStack.ToString());
+                        MyDebugWriteLine("DR already open -> " + RunningDRStack.ToString());
                         throw new VulpesSqlDataReaderConflictException("There's already an open SqlDataReader") { CurrentOpenDR = RunningDR, LastStackTrace = RunningDRStack, CurrentStackTrace = new StackTrace(skipFrames: 1, fNeedFileInfo: true) };
                     }
                     else
@@ -882,7 +900,7 @@ namespace Vulpes.Library
                 command.CommandTimeout = SqlCommandTimeout;
                 command.Connection = Connection;
                 command.CommandType = System.Data.CommandType.Text;
-                Debug.WriteLine("SQLIM: " + Query);
+                MyDebugWriteLine("SQLIM: " + Query);
                 if (SQLTransaction == true)
                     command.Transaction = trans;
                 foreach (SQLData d in data)
@@ -895,7 +913,7 @@ namespace Vulpes.Library
             }
             catch (Exception ee)
             {
-                Debug.WriteLine(ee.ToString());
+                MyDebugWriteLine(ee.ToString());
                 if (SEHError == true)
                     throw;
                 return (false);
@@ -950,7 +968,7 @@ namespace Vulpes.Library
                 {
                     if (SEHError == true)
                     {
-                        Debug.WriteLine("DR already open -> " + RunningDRStack.ToString());
+                        MyDebugWriteLine("DR already open -> " + RunningDRStack.ToString());
                         throw new VulpesSqlDataReaderConflictException("There's already an open SqlDataReader") { CurrentOpenDR = RunningDR, LastStackTrace = RunningDRStack, CurrentStackTrace = new StackTrace(skipFrames: 1, fNeedFileInfo: true) };
                     }
                     else
@@ -968,7 +986,7 @@ namespace Vulpes.Library
                 command.CommandTimeout = SqlCommandTimeout;
                 command.Connection = Connection;
                 command.CommandType = System.Data.CommandType.Text;
-                Debug.WriteLine("SQLIMID: " + Query);
+                MyDebugWriteLine("SQLIMID: " + Query);
                 if (SQLTransaction == true)
                     command.Transaction = trans;
                 foreach (SQLData d in data)
@@ -980,7 +998,7 @@ namespace Vulpes.Library
             }
             catch (Exception ee)
             {
-                Debug.WriteLine(ee.ToString());
+                MyDebugWriteLine(ee.ToString());
                 if (SEHError == true)
                     throw;
                 return (null);
@@ -1028,7 +1046,7 @@ namespace Vulpes.Library
             }
             catch (Exception ee)
             {
-                Debug.WriteLine(ee.ToString());
+                MyDebugWriteLine(ee.ToString());
                 if (SEHError == true)
                     throw;
                 return (false);
@@ -1086,7 +1104,7 @@ namespace Vulpes.Library
             }
             catch (Exception ee)
             {
-                Debug.WriteLine(ee.ToString());
+                MyDebugWriteLine(ee.ToString());
                 if (SEHError == true)
                     throw;
                 return (false);
@@ -1124,7 +1142,7 @@ namespace Vulpes.Library
             }
             catch (Exception ee)
             {
-                Debug.WriteLine(ee.ToString());
+                MyDebugWriteLine(ee.ToString());
                 if (SEHError == true)
                     throw;
                 return (null);
@@ -1163,7 +1181,7 @@ namespace Vulpes.Library
             }
             catch (Exception ee)
             {
-                Debug.WriteLine(ee.ToString());
+                MyDebugWriteLine(ee.ToString());
                 if (SEHError == true)
                     throw;
                 return (null);
@@ -1204,7 +1222,7 @@ namespace Vulpes.Library
                     {
                         if (SEHError == true)
                         {
-                            Debug.WriteLine("DR already open -> " + RunningDRStack.ToString());
+                            MyDebugWriteLine("DR already open -> " + RunningDRStack.ToString());
                             throw new VulpesSqlDataReaderConflictException("There's already an open SqlDataReader") { CurrentOpenDR = RunningDR, LastStackTrace = RunningDRStack, CurrentStackTrace = new StackTrace(skipFrames: 1, fNeedFileInfo: true) };
                         }
                         else
@@ -1248,12 +1266,12 @@ namespace Vulpes.Library
                 SqlBulkCopy bulk = new SqlBulkCopy(connection, SqlBulkCopyOptions.CheckConstraints, null);
                 bulk.DestinationTableName = Table;
                 bulk.BulkCopyTimeout = SqlCommandTimeout;
-                Debug.WriteLine("SQLBULKI: " + Table);
+                MyDebugWriteLine("SQLBULKI: " + Table);
                 bulk.WriteToServer(table);
             }
             catch (Exception ee)
             {
-                Debug.WriteLine(ee.ToString());
+                MyDebugWriteLine(ee.ToString());
                 if (SEHError == true)
                     throw;
                 return (false);
@@ -1370,7 +1388,7 @@ namespace Vulpes.Library
                             txtw.Write("0x" + BitConverter.ToString((byte[])dr.GetValue(i)));
                             break;
                         default:
-                            Debug.WriteLine("UNK SQL TYPE: " + dr.GetDataTypeName(i));
+                            MyDebugWriteLine("UNK SQL TYPE: " + dr.GetDataTypeName(i));
                             txtw.Write("???");
                             break;
                     }

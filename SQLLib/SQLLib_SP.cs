@@ -18,7 +18,7 @@ namespace Vulpes.Library
         {
             if (Connection == null)
                 return (false);
-            Debug.WriteLine("SQL--: " + OutputParameters(Parameters) + Procedure);
+            MyDebugWriteLine("[SP] SQL--: " + MyDebugOutputParameters(Parameters) + Procedure);
 #if !DEBUGDB
             try
             {
@@ -39,7 +39,7 @@ namespace Vulpes.Library
             }
             catch (Exception ee)
             {
-                Debug.WriteLine(ee.ToString());
+                MyDebugWriteLine(ee.ToString());
                 if (SEHError == true)
                     throw;
                 return (false);
@@ -51,7 +51,7 @@ namespace Vulpes.Library
         {
             if (Connection == null)
                 return (null);
-            Debug.WriteLine("SQLDR: " + OutputParameters(Parameters) + Procedure);
+            MyDebugWriteLine("[SP] SQLDR: " + MyDebugOutputParameters(Parameters) + Procedure);
 #if !DEBUGDB
             try
             {
@@ -71,7 +71,7 @@ namespace Vulpes.Library
             }
             catch (Exception ee)
             {
-                Debug.WriteLine(ee.ToString());
+                MyDebugWriteLine(ee.ToString());
                 if (SEHError == true)
                     throw;
                 return (null);
@@ -83,7 +83,7 @@ namespace Vulpes.Library
         {
             if (Connection == null)
                 return (0);
-            Debug.WriteLine("SQLNQ: " + OutputParameters(Parameters) + Procedure);
+            MyDebugWriteLine("[SP] SQLNQ: " + MyDebugOutputParameters(Parameters) + Procedure);
 #if !DEBUGDB
             try
             {
@@ -103,7 +103,7 @@ namespace Vulpes.Library
             }
             catch (Exception ee)
             {
-                Debug.WriteLine(ee.ToString());
+                MyDebugWriteLine(ee.ToString());
                 if (SEHError == true)
                     throw;
                 return (0);
@@ -115,7 +115,7 @@ namespace Vulpes.Library
         {
             if (Connection == null)
                 return (null);
-            Debug.WriteLine("SQLSC: " + OutputParameters(Parameters) + Procedure);
+            MyDebugWriteLine("[SP] SQLSC: " + MyDebugOutputParameters(Parameters) + Procedure);
 #if !DEBUGDB
             try
             {
@@ -135,7 +135,7 @@ namespace Vulpes.Library
             }
             catch (Exception ee)
             {
-                Debug.WriteLine(ee.ToString());
+                MyDebugWriteLine(ee.ToString());
                 if (SEHError == true)
                     throw;
                 return (null);
