@@ -431,6 +431,14 @@ namespace Vulpes.Library
             }
 #endif
         }
+		
+		public bool SQLIsEnterprise()
+        {
+            string SQLEdition = Convert.ToString(ExecSQLScalar("SELECT SERVERPROPERTY('edition')")).Trim();
+            if (SQLEdition.ToLower().StartsWith("enterprise edition") == false && SQLEdition.ToLower() != "sql azure")
+                return (false);
+            return (true);
+        }
 
         public bool ExecSQL_EnterpriseOnly(string Query, params SQLParam[] Parameters)
         {
