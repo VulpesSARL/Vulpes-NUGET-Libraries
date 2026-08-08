@@ -53,9 +53,9 @@ namespace Vulpes.Library
 
         public string ApplicationName
         {
-            get 
+            get
             {
-                return (appname); 
+                return (appname);
             }
             set
             {
@@ -84,7 +84,7 @@ namespace Vulpes.Library
             }
         }
 
-        public void MyDebugWriteLine(string data)
+        void MyDebugWriteLine(string data)
         {
             if (Debug_EnableVerboseOutput == true)
             {
@@ -198,7 +198,7 @@ namespace Vulpes.Library
             return (true);
         }
 
-        public string MyDebugOutputParameters(SQLParam[] parameters)
+        string MyDebugOutputParameters(SQLParam[] parameters)
         {
             if (Debug_EnableParametersOutput == true && Debug_EnableVerboseOutput == true)
             {
@@ -217,6 +217,19 @@ namespace Vulpes.Library
                             VValue = "null";
                         else
                             VValue = "'" + Convert.ToDateTime(p.Content).ToString("yyyy-MM-dd HH:mm:ss") + "'";
+                    }
+                    if (t == typeof(bool))
+                    {
+                        VType = "bit";
+                        if (t == null)
+                            VValue = "null";
+                        else
+                            VValue = Convert.ToBoolean(p.Content) == true ? "1" : "0";
+                    }
+                    if (t == typeof(System.DBNull))
+                    {
+                        VType = "nvarchar(10)";
+                        VValue = "null";
                     }
                     if (t == typeof(Int32))
                     {
@@ -258,7 +271,7 @@ namespace Vulpes.Library
                 }
                 sb.AppendLine();
                 sb.AppendLine();
-                return (sb.ToString()); 
+                return (sb.ToString());
             }
             else
             {
@@ -431,8 +444,8 @@ namespace Vulpes.Library
             }
 #endif
         }
-		
-		public bool SQLIsEnterprise()
+
+        public bool SQLIsEnterprise()
         {
             string SQLEdition = Convert.ToString(ExecSQLScalar("SELECT SERVERPROPERTY('edition')")).Trim();
             if (SQLEdition.ToLower().StartsWith("enterprise edition") == false && SQLEdition.ToLower() != "sql azure")
