@@ -47,6 +47,7 @@ namespace Vulpes.Library
         public int ConnectRetryInterval = 30;
         public int ConnectTimeout = 180;
         public int SqlCommandTimeout = 600;
+        public int MaxPoolSize = 100;
 
         public static bool Debug_EnableVerboseOutput = false;
         public static bool Debug_EnableParametersOutput = false;
@@ -149,6 +150,7 @@ namespace Vulpes.Library
                 conn["Pooling"] = ConnectionPooling == true ? "true" : "false";
                 conn["ConnectRetryCount"] = ConnectRetryCount;
                 conn["ConnectRetryInterval"] = ConnectRetryInterval;
+                conn["Max Pool Size"] = MaxPoolSize;
                 Connection = new SqlConnection(conn.ConnectionString);
                 Connection.Open();
 #if !DEBUGDB
@@ -183,6 +185,7 @@ namespace Vulpes.Library
                 conn["Pooling"] = ConnectionPooling == true ? "true" : "false";
                 conn["ConnectRetryCount"] = ConnectRetryCount;
                 conn["ConnectRetryInterval"] = ConnectRetryInterval;
+                conn["Max Pool Size"] = MaxPoolSize;
                 Connection = new SqlConnection(conn.ConnectionString);
                 Connection.Open();
 #if !DEBUGDB
@@ -306,6 +309,7 @@ namespace Vulpes.Library
                 conn["ConnectRetryCount"] = ConnectRetryCount;
                 conn["ConnectRetryInterval"] = ConnectRetryInterval;
                 conn["Connection Timeout"] = ConnectTimeout;
+                conn["Max Pool Size"] = MaxPoolSize;
 
                 Connection = new SqlConnection(conn.ConnectionString);
                 Connection.Open();
@@ -343,6 +347,7 @@ namespace Vulpes.Library
                 conn["ConnectRetryCount"] = ConnectRetryCount;
                 conn["ConnectRetryInterval"] = ConnectRetryInterval;
                 conn["Encrypt"] = UseEncryption;
+                conn["Max Pool Size"] = MaxPoolSize;
                 Connection = new SqlConnection(conn.ConnectionString);
                 Connection.Open();
 #if !DEBUGDB
@@ -380,6 +385,7 @@ namespace Vulpes.Library
                 conn["ConnectRetryCount"] = ConnectRetryCount;
                 conn["ConnectRetryInterval"] = ConnectRetryInterval;
                 conn["Encrypt"] = UseEncryption;
+                conn["Max Pool Size"] = MaxPoolSize;
                 Connection = new SqlConnection(conn.ConnectionString);
                 Connection.Open();
 #if !DEBUGDB
